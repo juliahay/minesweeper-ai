@@ -278,24 +278,29 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        total_cells = self.height * self.width
-        checked_cells = set()
+        available_cells = set()
 
-        while True:
-            if len(checked_cells) == total_cells:
-                return None
+        for i in range(self.height):
+            for j in range(self.width):
+                cell = (i, j)
 
-            cell = (random.randrange(self.height), random.randrange(self.width))
-            checked_cells.add(cell)
+                # check if cell has already been done
+                if cell in self.moves_made:
+                    continue
+                
+                if cell in self.safes:
+                    continue
 
-            # check if cell has already been done
-            if cell in self.moves_made:
-                continue
+                # check if cell is a mine
+                if cell in self.mines:
+                    continue
 
-            # check if cell is a mine
-            if cell in self.mines:
-                continue
+                available_cells.add(cell)
+        
+        if available_cells:
+            return available_cells.pop()
 
-            return cell
+        return None
+        
 
 
