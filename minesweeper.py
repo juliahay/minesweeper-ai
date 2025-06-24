@@ -218,24 +218,23 @@ class MinesweeperAI():
                         surrounding_cells.add(neighbor)
         
         new_sentence = Sentence(surrounding_cells, count)
-        self.knowledge.append(new_sentence)
         
-        if new_sentence.known_safes():
-            safe_set = new_sentence.known_safes().copy()
-            for safe in safe_set:
-                self.mark_safe(safe)
+        if len(new_sentence.known_safes()) > 0:
+            for s in new_sentence.known_safes():
+                self.mark_safe(s)
 
-        if new_sentence.known_mines():
-            mine_set = new_sentence.known_mines().copy()
-            for mine in mine_set:
-                self.mark_mine(mine) 
+        if len(new_sentence.known_mines()) > 0:
+            for m in new_sentence.known_mines():
+                self.mark_mine(m) 
+
+        self.knowledge.append(new_sentence)
 
         for sentence in self.knowledge:
             overlap = set()
             if new_sentence.cells.issubset(sentence.cells):
                 overlap = sentence.cells.difference(new_sentence.cells)
                 if len(overlap) > 0:
-                    new_info = Sentence(overlap, sentence.count - new_sentence.count)         
+                    new_info = Sentence(overlap, sentence.count - new_sentence.count)    
             elif new_sentence.cells.issuperset(sentence.cells):
                 overlap = new_sentence.cells.difference(sentence.cells)
                 if len(overlap) > 0:
