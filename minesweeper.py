@@ -211,6 +211,7 @@ class MinesweeperAI():
                 if 0 <= neighbor[0] < self.height and 0 <= neighbor[1] < self.width:
                     if neighbor in self.mines:
                         count -= 1
+                        continue
                     elif neighbor in self.safes:
                         continue
                     elif neighbor not in self.moves_made:
@@ -218,26 +219,26 @@ class MinesweeperAI():
         
         new_sentence = Sentence(surrounding_cells, count)
         self.knowledge.append(new_sentence)
-
+        
         if new_sentence.known_safes():
             safe_set = new_sentence.known_safes().copy()
             for safe in safe_set:
                 self.mark_safe(safe)
 
-            if new_sentence.known_mines():
-                mine_set = new_sentence.known_mines().copy()
-                for mine in mine_set:
-                    self.mark_mine(mine) 
+        if new_sentence.known_mines():
+            mine_set = new_sentence.known_mines().copy()
+            for mine in mine_set:
+                self.mark_mine(mine) 
 
         for sentence in self.knowledge:
             overlap = set()
             if new_sentence.cells.issubset(sentence.cells):
                 overlap = sentence.cells.difference(new_sentence.cells)
-                if overlap:
-                    new_info = Sentence(overlap, sentence.count - new_sentence.count)                 
+                if len(overlap) > 0:
+                    new_info = Sentence(overlap, sentence.count - new_sentence.count)         
             elif new_sentence.cells.issuperset(sentence.cells):
                 overlap = new_sentence.cells.difference(sentence.cells)
-                if overlap:
+                if len(overlap) > 0:
                     new_info = Sentence(overlap, new_sentence.count - sentence.count)
             
             if len(overlap) > 0:
@@ -253,6 +254,7 @@ class MinesweeperAI():
                         mine_set = new_info.known_mines().copy()
                         for mine in mine_set:
                             self.mark_mine(mine) 
+ 
 
                         
 
@@ -279,7 +281,6 @@ class MinesweeperAI():
             2) are not known to be mines
         """
         available_cells = set()
-
         for i in range(self.height):
             for j in range(self.width):
                 cell = (i, j)
@@ -298,7 +299,7 @@ class MinesweeperAI():
                 available_cells.add(cell)
         
         if available_cells:
-            return available_cells.pop()
+            return random.choice(list(available_cells))
 
         return None
         
