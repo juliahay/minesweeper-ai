@@ -228,31 +228,32 @@ class MinesweeperAI():
                 self.mark_mine(m) 
 
         self.knowledge.append(new_sentence)
-
+    
         for sentence in self.knowledge:
-            overlap = set()
+            diff = set()
             if new_sentence.cells.issubset(sentence.cells):
-                overlap = sentence.cells.difference(new_sentence.cells)
-                if len(overlap) > 0:
-                    new_info = Sentence(overlap, sentence.count - new_sentence.count)    
+                diff = sentence.cells.difference(new_sentence.cells)
+                print("Sentence:", sentence)
+                print("New sentence:", new_sentence)
+                if len(diff) > 0:
+                    new_info = Sentence(diff, sentence.count - new_sentence.count) 
+                    print("New info:", new_info)        
             elif new_sentence.cells.issuperset(sentence.cells):
-                overlap = new_sentence.cells.difference(sentence.cells)
-                if len(overlap) > 0:
-                    new_info = Sentence(overlap, new_sentence.count - sentence.count)
+                diff = new_sentence.cells.difference(sentence.cells)
+                if len(diff) > 0:
+                    new_info = Sentence(diff, new_sentence.count - sentence.count)
             
-            if len(overlap) > 0:
+            if len(diff) > 0:
                 if new_info not in self.knowledge:
-                    self.knowledge.append(new_info)
-                        
-                    if new_info.known_safes():
-                        safe_set = new_info.known_safes().copy()
-                        for safe in safe_set:
-                            self.mark_safe(safe)
+                    if len(new_info.known_safes()) > 0:
+                        for s in new_info.known_safes():
+                            self.mark_safe(s)
 
-                    if new_info.known_mines():
-                        mine_set = new_info.known_mines().copy()
-                        for mine in mine_set:
+                    if len(new_info.known_mines()) > 0:
+                        for mine in new_info.known_mines():
                             self.mark_mine(mine) 
+                    
+                    self.knowledge.append(new_info)
  
 
                         
