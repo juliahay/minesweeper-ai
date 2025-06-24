@@ -221,15 +221,20 @@ class MinesweeperAI():
         
         if len(new_sentence.known_safes()) > 0:
             for s in new_sentence.known_safes():
-                self.mark_safe(s)
+                if s not in self.safes:
+                    self.mark_safe(s)
 
         if len(new_sentence.known_mines()) > 0:
             for m in new_sentence.known_mines():
-                self.mark_mine(m) 
+                if m not in self.mines:
+                    self.mark_mine(m) 
 
         self.knowledge.append(new_sentence)
     
         for sentence in self.knowledge:
+            if sentence == new_sentence:
+                continue
+            
             diff = set()
             if new_sentence.cells.issubset(sentence.cells):
                 diff = sentence.cells.difference(new_sentence.cells)
