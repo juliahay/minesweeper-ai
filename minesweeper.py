@@ -230,7 +230,8 @@ class MinesweeperAI():
                     self.mark_mine(m) 
 
         self.knowledge.append(new_sentence)
-    
+
+        """
         for sentence in self.knowledge:
             if sentence == new_sentence:
                 continue
@@ -259,7 +260,7 @@ class MinesweeperAI():
                             self.mark_mine(mine) 
                     
                     self.knowledge.append(new_info)
- 
+        """
 
                         
 
