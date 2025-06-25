@@ -231,7 +231,8 @@ class MinesweeperAI():
 
         self.knowledge.append(new_sentence)
 
-        for sentence in self.knowledge:
+        KB = self.knowledge.copy()
+        for sentence in KB:
             
             if len(sentence.known_safes()) > 0:
                 safe_set = sentence.known_safes().copy()
@@ -245,8 +246,31 @@ class MinesweeperAI():
                     if m not in self.mines:
                         self.mark_mine(m) 
 
-            for sentence_list in self.knowledge:
-                continue
+            for sentence_list in KB:
+                if sentence == new_sentence:
+                    continue
+                
+                diff = set()
+                if sentence.cells.issubset(sentence_list.cells):
+                    diff = sentence_list.cells.difference(sentence.cells)
+                    if len(diff) > 0:
+                        new_info = Sentence(diff, sentence_list.count - sentence.count)        
+                elif sentence.cells.issuperset(sentence_list.cells):
+                    diff = sentence.cells.difference(sentence_list.cells)
+                    if len(diff) > 0:
+                        new_info = Sentence(diff, sentence.count - sentence_list.count)
+                
+                if len(diff) > 0:
+                    if new_info not in self.knowledge:
+                        if len(new_info.known_safes()) > 0:
+                            for s in new_info.known_safes():
+                                self.mark_safe(s)
+
+                        if len(new_info.known_mines()) > 0:
+                            for mine in new_info.known_mines():
+                                self.mark_mine(mine) 
+                        
+                        self.knowledge.append(new_info)
 
         """
         for sentence in self.knowledge:
